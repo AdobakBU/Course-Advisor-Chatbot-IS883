@@ -12,10 +12,54 @@ from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
+from io import StringIO
+
 
 # Show title and description.
 st.title("💬 Chatbot")
 
+syllabus_corpus_path = "https://raw.githubusercontent.com/AdobakBU/Course-Advisor_Chatbot-IS883/main/data/"
+
+def load_pdf_and_csv(folder_path): #our function to chunk the data
+    filenames = ["example.pdf", "example.csv"]  # Replace with actual filenames in your folder
+    chunks = []
+    
+    for filename in filenames:
+        file_url = f"{folder_path}{filename}"  # Construct the full file URL
+        
+        # Handle PDF files
+        if filename.endswith('.pdf'):
+            try:
+                response = requests.get(file_url)
+                response.raise_for_status()  # Raise an error for failed requests
+                
+                # Process the PDF
+                with fitz.open(stream=response.content, filetype="pdf") as doc:
+                    for page_number in range(len(doc)):
+                        page = doc.load_page(page_number)
+                        text = page.get_text()
+                        # Create a Document object for each chunk
+                        chunks.append(Document(page_content=text, metadata={"source": filename, "page": page_number + 1}))
+            except Exception as e:
+                print(f"Error loading {filename}: {e}")
+        
+        # Handle CSV files
+        #elif filename.endswith('.csv'):
+        #   try:
+        #        response = requests.get(file_url)
+        #        response.raise_for_status()  # Raise an error for failed requests
+                
+                # Process the CSV
+        #        csv_file = StringIO(response.text)  # Create an in-memory file-like object
+        #        reader = csv.reader(csv_file)
+        #        for row_number, row in enumerate(reader):
+        #            text = ', '.join(row)  # Combine CSV fields into a single string
+        #            # Create a Document object for each row
+        #            chunks.append(Document(page_content=text, metadata={"source": filename, "row": row_number + 1}))
+        #    except Exception as e:
+        #        print(f"Error loading {filename}: {e}")
+    
+    return chunks
 ### Important part.
 # Create a session state variable to flag whether the app has been initialized.
 # This code will only be run first time the app is loaded.
