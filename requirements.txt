@@ -5,7 +5,6 @@ langchain_openai
 pypdf
 pymupdf
 python-dotenv
-langchain-community
 fitz
 cvs
 typing
