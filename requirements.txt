@@ -6,5 +6,5 @@ pypdf
 pymupdf
 python-dotenv
 fitz
-cvs
+csv
 typing
