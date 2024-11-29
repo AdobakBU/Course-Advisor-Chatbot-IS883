@@ -8,6 +8,5 @@ python-dotenv
 fitz
 typing
 langchain-community
-csv
 requests
 io
