@@ -13,7 +13,6 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 
-
 # Show title and description.
 st.title("💬 Chatbot")
 
