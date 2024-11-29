@@ -1,9 +1,10 @@
-import streamlit as st
-from langchain.memory import ConversationBufferWindowMemory
-from langchain_openai import ChatOpenAI
-from langchain.agents import AgentExecutor, create_tool_calling_agent, create_react_agent
-from langchain import hub
+import os
+import fitz  # PyMuPDF
+import csv
 from typing import List
+import requests
+from io import StringIO
+from langchain.schema import Document  
 from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -12,141 +13,144 @@ from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
-import os
-import fitz  # PyMuPDF
-import csv
-from typing import List
-import requests
-from io import StringIO
+from google.colab import userdata
+import streamlit as st
 
-# Show title and description.
-st.title("💬 Chatbot")
+# Load PDF documents using PyMuPDF
+folder_path = "https://raw.githubusercontent.com/AdobakBU/Course-Advisor-Chatbot-IS883/main/data/"
 
-### Important part.
-# Create a session state variable to flag whether the app has been initialized.
-# This code will only be run first time the app is loaded.
-if "memory" not in st.session_state: ### IMPORTANT.
-    model_type="gpt-4o-mini"
-    
+def load_pdf_and_csv(folder_path):
+    """
+    Function to fetch PDF and CSV files from a GitHub folder URL and process them into chunks.
 
-    # initialize the momory
-    max_number_of_exchanges = 10
-    st.session_state.memory = ConversationBufferWindowMemory(memory_key="chat_history", k=max_number_of_exchanges, return_messages=True) ### IMPORTANT to use st.session_state.memory.
+    Args:
+        folder_path (str): URL to the folder containing the PDF and CSV files.
 
-    # LLM
-    chat = ChatOpenAI(openai_api_key=st.secrets["OpenAI_API_KEY"], model=model_type)
+    Returns:
+        list: A list of Document objects, each representing a chunk of text from the files.
+    """
+    # List of file names in the folder to process, new file names must be added manually!
+    filenames = [
+        "2023_FALL_FE_711_A1.pdf", "2023_FALL_FE_711_B1.pdf", "2023_FALL_FE_722_OL.pdf",
+        "2023_FALL_FE_822_E1.pdf", "2023_FALL_FE_823_D1.pdf", "2023_FALL_FE_850_D1.pdf",
+        "2023_FALL_FE_870_S1.pdf", "2023_FALL_FE_918_A1.pdf", "2023_SPRG_FE_712_A1.pdf",
+        "2023_SPRG_FE_712_B1.pdf", "2023_SPRG_FE_712_C1.pdf", "2023_SPRG_FE_713_E1.pdf",
+        "2023_SPRG_FE_722_F1.pdf", "2023_SPRG_FE_833_E1.pdf", "2023_SPRG_FE_850_E1.pdf",
+        "2023_SPRG_FE_854_E1.pdf", "2023_SPRG_FE_920_A1.pdf"
+    ]
 
-    # tools
-    from langchain.agents import tool
-    from datetime import date
-    @tool
-    def datetoday(dummy: str) -> str:
-        """Returns today's date, use this for any \
-        questions that need today's date to be answered. \
-        This tool returns a string with today's date.""" #This is the desciption the agent uses to determine whether to use the time tool.
-        return "Today is " + str(date.today())
-        """Returns an answer based on Boston University syllubi. \
-        use this for any questions related to classes or academics."""
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    chunks = []
 
-        chunks = load_pdf_and_csv(folder_path)
+    # Iterate through the list of filenames
+    for filename in filenames:
+        # This line was not indented causing the error
+        file_url = f"{folder_path}{filename}"  
+        # Handle PDF files
+        if filename.endswith('.pdf'):
+            try:
+                response = requests.get(file_url)
+                response.raise_for_status()  # Raise an error for failed requests
 
-        chunks = text_splitter.split_documents(chunks)
+                # Process the PDF
+                with fitz.open(stream=response.content, filetype="pdf") as doc:
+                    for page_number in range(len(doc)):
+                        page = doc.load_page(page_number)
+                        text = page.get_text()
+                        # Create a Document object for each chunk
+                        chunks.append(Document(page_content=text, metadata={"source": filename, "page": page_number + 1}))
+            except Exception as e:
+                print(f"Error loading {filename}: {e}")
 
-        # Initialize the FAISS vector store with OpenAI embeddings
-        openai_api_key = openaikey
-        faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openai_api_key))
+        # Handle CSV files
+        elif filename.endswith('.csv'):
+            try:
+                response = requests.get(file_url)
+                response.raise_for_status()  # Raise an error for failed requests
 
-        # Define the number of top matching chunks to retrieve
-        number_of_top_matches = 5
+                # Process the CSV
+                csv_file = StringIO(response.text)  # Create an in-memory file-like object
+                reader = csv.reader(csv_file)
+                for row_number, row in enumerate(reader):
+                    text = ', '.join(row)  # Combine CSV fields into a single string
+                    # Create a Document object for each row
+                    chunks.append(Document(page_content=text, metadata={"source": filename, "row": row_number + 1}))
+            except Exception as e:
+                print(f"Error loading {filename}: {e}")
 
-        # Prompt the user for a question
-        question = input("Please enter your question: ")
-
-        # Retrieve top matching chunks from FAISS store
-        top_matching_chunks = faiss_store.similarity_search_with_score(question, k=number_of_top_matches)
-
-        # Combine content from all top matching chunks
-        combined_context = " ".join([chunk.page_content for chunk, score in top_matching_chunks])
-
-        # Answer generation using LangChain's Retrieval-Augmented Generation (RAG) chain
-        temperature = 1.0
-        llm = ChatOpenAI(openai_api_key=st.secrets["OpenAI_API_KEY"], model=model_type)
+    # Return the accumulated chunks after the loop finishes
+    return chunks
 
 
-        # Enhanced system prompt for the language model
-        system_prompt = (
-            """
-            You are an academic advisor assistant at Boston University. Answer all questions based on the provided context.
-            If the answer is not explicitly mentioned in the context, try to summarize the most relevant information related to the question.
+# Retrieve OpenAI API key
+openaikey = st.secrets["OpenAI_API_KEY"]
 
-            Context:
-            {context}
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 
-            Question:
-            {input}
+chunks = load_pdf_and_csv(folder_path)
 
-            Please provide a concise answer based on the above information.
-            """
-        )
+chunks = text_splitter.split_documents(chunks)
 
-        # Create the prompt template
-        prompt = ChatPromptTemplate.from_messages(
-            [
-                ("system", system_prompt),
-                ("human", "{input}"),
-            ]
-        )
+# Initialize the FAISS vector store with OpenAI embeddings
+openai_api_key = openaikey
+faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openai_api_key))
 
-        # Create the aggregator to assemble documents into a single context
-        aggregator = create_stuff_documents_chain(chat, prompt=prompt)
+# Define the number of top matching chunks to retrieve
+number_of_top_matches = 5
 
-        # Define the retriever using FAISS store
-        retriever = faiss_store.as_retriever(k=number_of_top_matches)
+# Prompt the user for a question
+question = st.chat_input("What is up?")
 
-        # Finalize the RAG chain
-        rag_chain = create_retrieval_chain(retriever, aggregator)
+# Retrieve top matching chunks from FAISS store
+top_matching_chunks = faiss_store.similarity_search_with_score(question, k=number_of_top_matches)
 
-        # Get the answer for the user-provided question
-        response = rag_chain.invoke({"input": question, "context": combined_context})
+# Combine content from all top matching chunks
+combined_context = " ".join([chunk.page_content for chunk, score in top_matching_chunks])
 
-        # Safely extract the top answer based on the response structure
-        answer = response.get("answer")
+# Answer generation using LangChain's Retrieval-Augmented Generation (RAG) chain
+temperature = 1.0
+llm = ChatOpenAI(openai_api_key=openai_api_key, temperature=temperature)
 
-    tools = [datetoday]
+# Enhanced system prompt for the language model
+system_prompt = (
+    """
+    You are an academic advisor assistant at Boston University. Answer all questions based on the provided context.
+    If the answer is not explicitly mentioned in the context, try to summarize the most relevant information related to the question.
 
-    # Now we add the memory object to the agent executor
-    # prompt = hub.pull("hwchase17/react-chat")
-    # agent = create_react_agent(chat, tools, prompt)
-    from langchain_core.prompts import ChatPromptTemplate
+    Context:
+    {context}
 
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", "you are a helpful assistant."),
-            ("placeholder", "{chat_history}"),
-            ("human", "{input}"),
-            ("placeholder", "{agent_scratchpad}"),
-        ]
-    )
+    Question:
+    {input}
 
-    agent = create_tool_calling_agent(chat, tools, prompt)
-    st.session_state.agent_executor = AgentExecutor(agent=agent, tools=tools,  memory=st.session_state.memory, verbose= True)  # ### IMPORTANT to use st.session_state.memory and st.session_state.agent_executor.
+    Please provide a concise answer based on the above information.
+    """
+)
 
-# Display the existing chat messages via `st.chat_message`.
-for message in st.session_state.memory.buffer:
-    # if (message.type in ["ai", "human"]):
-    st.chat_message(message.type).write(message.content)
+# Create the prompt template
+prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", system_prompt),
+        ("human", "{input}"),
+    ]
+)
 
-# Create a chat input field to allow the user to enter a message. This will display
-# automatically at the bottom of the page.
-if prompt := st.chat_input("What is up?"):
-    
-    # question
-    st.chat_message("user").write(prompt)
+# Create the aggregator to assemble documents into a single context
+aggregator = create_stuff_documents_chain(llm, prompt=prompt)
 
-    # Generate a response using the OpenAI API.
-    response = st.session_state.agent_executor.invoke({"input":prompt})['output']
+# Define the retriever using FAISS store
+retriever = faiss_store.as_retriever(k=number_of_top_matches)
 
-    # response
-    st.chat_message("assistant").write(response)
-    # st.write(st.session_state.memory.buffer)
+# Finalize the RAG chain
+rag_chain = create_retrieval_chain(retriever, aggregator)
+
+# Get the answer for the user-provided question
+response = rag_chain.invoke({"input": question, "context": combined_context})
+
+# Safely extract the top answer based on the response structure
+answer = response.get("answer")
+
+# print the top answer, if not found, indicate it was not available
+if answer and 'not explicitly mentioned' not in answer.lower():
+    st.write(answer)
+else:
+    st.write("The specific answer was not found.")
