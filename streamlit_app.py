@@ -13,7 +13,6 @@ from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
-from google.colab import userdata
 import streamlit as st
 
 # Load PDF documents using PyMuPDF
