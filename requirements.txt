@@ -9,3 +9,4 @@ fitz
 typing
 langchain-community
 requests
+faiss-gpu
