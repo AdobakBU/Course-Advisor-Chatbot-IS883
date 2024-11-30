@@ -99,8 +99,14 @@ number_of_top_matches = 5
 # Prompt the user for a question
 question = st.chat_input("What is up?")
 
-# Retrieve top matching chunks from FAISS store
-top_matching_chunks = faiss_store.similarity_search_with_score(question, k=number_of_top_matches)
+if question:
+    try:
+        top_matching_chunks = faiss_store.similarity_search_with_score(question)
+        # Further processing...
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
+else:
+    st.info("Please enter a question.")
 
 # Combine content from all top matching chunks
 combined_context = " ".join([chunk.page_content for chunk, score in top_matching_chunks])
