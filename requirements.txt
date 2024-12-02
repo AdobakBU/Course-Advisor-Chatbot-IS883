@@ -3,9 +3,8 @@ openai
 langchain
 langchain_openai
 pypdf
-pymupdf
+PyMuPDF
 python-dotenv
-fitz-utils
 typing
 langchain-community
 requests
