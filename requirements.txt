@@ -9,4 +9,3 @@ typing
 langchain-community
 requests
 faiss-cpu
--U PyMuPDF
