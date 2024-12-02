@@ -129,6 +129,9 @@ if "memory" not in st.session_state: ### IMPORTANT.
     # Define the number of top matching chunks to retrieve
     number_of_top_matches = 5
 
+    # Prompt the user for a question
+    question = prompt ##??? how to reconcile this? with user input below???? 
+
     # Retrieve top matching chunks from FAISS store
     top_matching_chunks = faiss_store.similarity_search_with_score(question, k=number_of_top_matches)
 
@@ -176,7 +179,7 @@ if "memory" not in st.session_state: ### IMPORTANT.
     response = rag_chain.invoke({"input": question, "context": combined_context})
 
     # Safely extract the top answer based on the response structure
-    answer = response.get("answer") #????? how to reconcile this with answer output below ??? 
+    answer = response.get("answer")            #????? how to reconcile this with answer output below ??? 
 
     tools = [datetoday, retriever.as_tool(
         name="BU-course-info-retreiver",
@@ -195,9 +198,6 @@ if "memory" not in st.session_state: ### IMPORTANT.
             ("placeholder", "{agent_scratchpad}"),
         ]
     )
-
-    # Prompt the user for a question
-    question = prompt ##??? how to reconcile this? with user input below???? 
 
     agent = create_tool_calling_agent(chat, tools, prompt)
     st.session_state.agent_executor = AgentExecutor(agent=agent, tools=tools,  memory=st.session_state.memory, verbose= True)  # ### IMPORTANT to use st.session_state.memory and st.session_state.agent_executor.
