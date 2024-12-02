@@ -1,5 +1,3 @@
-pip install --upgrade pip
-pip install -U PyMuPDF
 import streamlit as st
 from langchain.memory import ConversationBufferWindowMemory
 from langchain_openai import ChatOpenAI
