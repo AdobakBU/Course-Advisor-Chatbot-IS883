@@ -5,7 +5,7 @@ langchain_openai
 pypdf
 pymupdf
 python-dotenv
-fitz
+fitz-utils
 typing
 langchain-community
 requests
