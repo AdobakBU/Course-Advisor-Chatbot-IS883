@@ -11,6 +11,7 @@ import csv
 from typing import List
 import requests
 from io import StringIO
+from io import BytesIO
 from langchain.schema import Document  
 from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -83,7 +84,7 @@ if "memory" not in st.session_state: ### IMPORTANT.
                     response.raise_for_status()  # Raise an error for failed requests
                     
                     # Use PyPDF2 to read the PDF content
-                    reader = PdfReader(response.content)
+                    reader = PdfReader(BytesIO(response.content))
                     for page_number, page in enumerate(reader.pages):
                         text = page.extract_text()
                         if text:  # Ensure there's text to avoid empty chunks
