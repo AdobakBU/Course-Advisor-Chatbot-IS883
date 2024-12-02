@@ -3,6 +3,7 @@ openai
 langchain
 langchain_openai
 pypdf
+PyPDF2
 PyMuPDF
 python-dotenv
 typing

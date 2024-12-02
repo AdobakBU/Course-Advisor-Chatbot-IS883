@@ -4,7 +4,9 @@ from langchain_openai import ChatOpenAI
 from langchain.agents import AgentExecutor, create_tool_calling_agent, create_react_agent
 from langchain import hub
 import os
-##import fitz  # PyMuPDF
+import requests
+from PyPDF2 import PdfReader
+from langchain.schema import Document
 import csv
 from typing import List
 import requests
@@ -72,21 +74,23 @@ if "memory" not in st.session_state: ### IMPORTANT.
 
         # Iterate through the list of filenames
         for filename in filenames:
-            # This line was not indented causing the error
-            file_url = f"{folder_path}{filename}"  
+            file_url = f"{folder_path}{filename}"
+            
             # Handle PDF files
             if filename.endswith('.pdf'):
                 try:
                     response = requests.get(file_url)
                     response.raise_for_status()  # Raise an error for failed requests
-
-                    # Process the PDF
-                    with fitz.open(stream=response.content, filetype="pdf") as doc:
-                        for page_number in range(len(doc)):
-                            page = doc.load_page(page_number)
-                            text = page.get_text()
-                            # Create a Document object for each chunk
-                            chunks.append(Document(page_content=text, metadata={"source": filename, "page": page_number + 1}))
+                    
+                    # Use PyPDF2 to read the PDF content
+                    reader = PdfReader(response.content)
+                    for page_number, page in enumerate(reader.pages):
+                        text = page.extract_text()
+                        if text:  # Ensure there's text to avoid empty chunks
+                            chunks.append(Document(
+                                page_content=text,
+                                metadata={"source": filename, "page": page_number + 1}
+                            ))
                 except Exception as e:
                     print(f"Error loading {filename}: {e}")
 
