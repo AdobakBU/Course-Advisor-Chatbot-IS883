@@ -9,5 +9,4 @@ typing
 langchain-community
 requests
 faiss-cpu
---upgrade pip
 -U PyMuPDF
