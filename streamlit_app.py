@@ -116,9 +116,6 @@ if "memory" not in st.session_state: ### IMPORTANT.
         return chunks
     
 
-        # Retrieve OpenAI API key
-    openaikey = st.secrets["OpenAI_API_KEY"]
-
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 
     chunks = load_pdf_and_csv(folder_path)
@@ -181,9 +178,8 @@ if "memory" not in st.session_state: ### IMPORTANT.
     agent = create_tool_calling_agent(chat, tools, prompt)
     st.session_state.agent_executor = AgentExecutor(agent=agent, tools=tools,  memory=st.session_state.memory, verbose= True)  # ### IMPORTANT to use st.session_state.memory and st.session_state.agent_executor.
 
-
-
-
+    # Retrieve OpenAI API key
+openaikey = st.secrets["OpenAI_API_KEY"]
 
 # Display the existing chat messages via `st.chat_message`.
 for message in st.session_state.memory.buffer:
