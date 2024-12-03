@@ -203,7 +203,7 @@ if user_input := st.chat_input("What is up?"):
     #question = prompt ##???????????????? how to reconcile this? with user input below ?????????????????? 
 
     # Retrieve top matching chunks from FAISS store
-    top_matching_chunks = faiss_store.similarity_search_with_score(user_input, k=number_of_top_matches)
+    top_matching_chunks = st.session_state.faiss_store.similarity_search_with_score(user_input, k=number_of_top_matches)
 
     # Combine content from all top matching chunks
     combined_context = " ".join([chunk.page_content for chunk, score in top_matching_chunks])
