@@ -29,6 +29,9 @@ st.title("💬 Chatbot")
 # Define the number of top matching chunks to retrieve
 number_of_top_matches = 5
 
+# Retrieve OpenAI API key
+openaikey = st.secrets["OpenAI_API_KEY"]
+
 ### Important part.
 # Create a session state variable to flag whether the app has been initialized.
 # This code will only be run first time the app is loaded.
@@ -38,9 +41,6 @@ if "memory" not in st.session_state: ### IMPORTANT.
     # initialize the momory
     max_number_of_exchanges = 10
     st.session_state.memory = ConversationBufferWindowMemory(memory_key="chat_history", k=max_number_of_exchanges, return_messages=True) ### IMPORTANT to use st.session_state.memory.
-
-    # Retrieve OpenAI API key
-    openaikey = st.secrets["OpenAI_API_KEY"]
     
     # LLM
     chat = ChatOpenAI(openai_api_key=st.secrets["OpenAI_API_KEY"], model=model_type)
