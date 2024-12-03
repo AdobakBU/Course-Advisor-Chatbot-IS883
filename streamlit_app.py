@@ -131,7 +131,7 @@ if "memory" not in st.session_state: ### IMPORTANT.
     number_of_top_matches = 5
 
     # Prompt the user for a question
-    question = prompt ##??? how to reconcile this? with user input below???? 
+    question = prompt ##???????????????? how to reconcile this? with user input below   ?????????????????? 
 
     # Retrieve top matching chunks from FAISS store
     top_matching_chunks = faiss_store.similarity_search_with_score(question, k=number_of_top_matches)
@@ -160,6 +160,7 @@ if "memory" not in st.session_state: ### IMPORTANT.
     )
 
     # Create the prompt template
+    ## ??????? Is this even necessary given prompt below? ???????????
     prompt = ChatPromptTemplate.from_messages(
         [
             ("system", system_prompt),
