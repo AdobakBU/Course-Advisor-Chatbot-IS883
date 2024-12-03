@@ -126,8 +126,8 @@ if "memory" not in st.session_state: ### IMPORTANT.
     chunks = text_splitter.split_documents(chunks)
 
     # Initialize the FAISS vector store with OpenAI embeddings
-    openai_api_key = openaikey
-    faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openai_api_key))
+    ##openai_api_key = openaikey
+    ##faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openai_api_key))
 
     # Define the number of top matching chunks to retrieve
     number_of_top_matches = 5
