@@ -133,15 +133,15 @@ if "memory" not in st.session_state: ### IMPORTANT.
     # Define the number of top matching chunks to retrieve
     number_of_top_matches = 5
 
-    ## ??? tried to store faiss_store in session state, didn't work
-    ##if "faiss_store" not in st.session_state:
-        # Initialize FAISS vector store and store it in the session state
-        ##st.session_state.faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openaikey))
+    if "faiss_store" not in st.session_state:
+        st.session_state.faiss_store = FAISS.from_documents(
+            chunks, OpenAIEmbeddings(openai_api_key=openai_api_key)
+        )
 
-        ##faiss_store = st.session_state.faiss_store
+    retriever = st.session_state.faiss_store.as_retriever(k=number_of_top_matches)
 
     # Define the retriever using FAISS store
-    retriever = faiss_store.as_retriever(k=number_of_top_matches)
+    #retriever = faiss_store.as_retriever(k=number_of_top_matches)
 
     rag_tool = create_retriever_tool(
     retriever,
@@ -200,13 +200,13 @@ for message in st.session_state.memory.buffer:
 
 # Create a chat input field to allow the user to enter a message. This will display
 # automatically at the bottom of the page.
-if prompt := st.chat_input("What is up?"):
+if user_input := st.chat_input("What is up?"):
     
     # Prompt the user for a question
     question = prompt ##???????????????? how to reconcile this? with user input below ?????????????????? 
 
     # Retrieve top matching chunks from FAISS store
-    top_matching_chunks = faiss_store.similarity_search_with_score(question, k=number_of_top_matches)
+    top_matching_chunks = faiss_store.similarity_search_with_score(user_input, k=number_of_top_matches)
 
     # Combine content from all top matching chunks
     combined_context = " ".join([chunk.page_content for chunk, score in top_matching_chunks])
@@ -222,17 +222,17 @@ if prompt := st.chat_input("What is up?"):
     rag_chain = create_retrieval_chain(retriever, aggregator)
 
     # Get the answer for the user-provided question
-    response = rag_chain.invoke({"input": question, "context": combined_context})
+    #response = rag_chain.invoke({"input": question, "context": combined_context})
 
     # Safely extract the top answer based on the response structure
-    answer = response.get("answer")            #????? how to reconcile this with answer output below ??? 
+    #answer = response.get("answer")            #????? how to reconcile this with answer output below ??? 
 
     # question
-    st.chat_message("user").write(prompt)
+    st.chat_message("user").write(user_input)
 
     # Generate a response using the OpenAI API.
     ## ??????? do we still need this given response line above ???????????
-    response = st.session_state.agent_executor.invoke({"input":prompt})['output']
+    response = st.session_state.agent_executor.invoke({"input": user_input})
 
     # response
     st.chat_message("assistant").write(response)
