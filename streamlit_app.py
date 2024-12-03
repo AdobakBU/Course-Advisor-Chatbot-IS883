@@ -141,7 +141,7 @@ if "memory" not in st.session_state: ### IMPORTANT.
     retriever = st.session_state.faiss_store.as_retriever(k=number_of_top_matches)
 
     # Define the retriever using FAISS store
-    #retriever = faiss_store.as_retriever(k=number_of_top_matches)
+    ##retriever = faiss_store.as_retriever(k=number_of_top_matches)
 
     rag_tool = create_retriever_tool(
     retriever,
