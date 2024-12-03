@@ -26,6 +26,8 @@ from langchain.prompts import ChatPromptTemplate
 # Show title and description.
 st.title("💬 Chatbot")
 
+# Define the number of top matching chunks to retrieve
+number_of_top_matches = 5
 
 ### Important part.
 # Create a session state variable to flag whether the app has been initialized.
@@ -129,9 +131,6 @@ if "memory" not in st.session_state: ### IMPORTANT.
     # Initialize the FAISS vector store with OpenAI embeddings
     openai_api_key = openaikey
     faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openai_api_key))
-
-    # Define the number of top matching chunks to retrieve
-    number_of_top_matches = 5
 
     if "faiss_store" not in st.session_state:
         st.session_state.faiss_store = FAISS.from_documents(
