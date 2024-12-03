@@ -36,6 +36,9 @@ if "memory" not in st.session_state: ### IMPORTANT.
     max_number_of_exchanges = 10
     st.session_state.memory = ConversationBufferWindowMemory(memory_key="chat_history", k=max_number_of_exchanges, return_messages=True) ### IMPORTANT to use st.session_state.memory.
 
+    # Retrieve OpenAI API key
+    openaikey = st.secrets["OpenAI_API_KEY"]
+    
     # LLM
     chat = ChatOpenAI(openai_api_key=st.secrets["OpenAI_API_KEY"], model=model_type)
 
@@ -129,6 +132,12 @@ if "memory" not in st.session_state: ### IMPORTANT.
     # Define the number of top matching chunks to retrieve
     number_of_top_matches = 5
 
+    if "faiss_store" not in st.session_state:
+# Initialize FAISS vector store and store it in the session state
+        st.session_state.faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openaikey))
+
+        faiss_store = st.session_state.faiss_store
+
         # Define the retriever using FAISS store
     retriever = faiss_store.as_retriever(k=number_of_top_matches)
 
@@ -178,20 +187,10 @@ if "memory" not in st.session_state: ### IMPORTANT.
     agent = create_tool_calling_agent(chat, tools, prompt)
     st.session_state.agent_executor = AgentExecutor(agent=agent, tools=tools,  memory=st.session_state.memory, verbose= True)  # ### IMPORTANT to use st.session_state.memory and st.session_state.agent_executor.
 
-    # Retrieve OpenAI API key
-openaikey = st.secrets["OpenAI_API_KEY"]
-
 # Display the existing chat messages via `st.chat_message`.
 for message in st.session_state.memory.buffer:
     # if (message.type in ["ai", "human"]):
     st.chat_message(message.type).write(message.content)
-
-
-if "faiss_store" not in st.session_state:
-# Initialize FAISS vector store and store it in the session state
-    st.session_state.faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openai_api_key))
-
-    faiss_store = st.session_state.faiss_store
 
 
 # Create a chat input field to allow the user to enter a message. This will display
@@ -209,9 +208,9 @@ if prompt := st.chat_input("What is up?"):
 
     # Answer generation using LangChain's Retrieval-Augmented Generation (RAG) chain
     temperature = 1.0
-    llm = ChatOpenAI(openai_api_key=openai_api_key, temperature=temperature)
+    llm = ChatOpenAI(openai_api_key=openaikey, temperature=temperature)
 
-            # Create the aggregator to assemble documents into a single context
+    # Create the aggregator to assemble documents into a single context
     aggregator = create_stuff_documents_chain(llm, prompt=prompt)
 
     # Finalize the RAG chain
