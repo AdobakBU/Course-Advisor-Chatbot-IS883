@@ -121,7 +121,6 @@ if "memory" not in st.session_state: ### IMPORTANT.
         # Return the accumulated chunks after the loop finishes
         return chunks
     
-
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 
     chunks = load_pdf_and_csv(folder_path)
@@ -161,15 +160,6 @@ if "memory" not in st.session_state: ### IMPORTANT.
         """
     )
 
-    # Create the prompt template
-    ## ??????? Is this even necessary given prompt below? ???????????
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", system_prompt),
-            ("human", "{input}"),
-        ]
-    )
-
     tools = [datetoday, rag_tool]
     
     # Now we add the memory object to the agent executor
@@ -178,7 +168,7 @@ if "memory" not in st.session_state: ### IMPORTANT.
     from langchain_core.prompts import ChatPromptTemplate
     prompt = ChatPromptTemplate.from_messages(
         [
-            ("system", "You are a helpful assistant."),
+            ("system", system_prompt),
             ("placeholder", "{chat_history}"),
             ("human", "{input}"),
             ("placeholder", "{agent_scratchpad}"),
