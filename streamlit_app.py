@@ -128,17 +128,17 @@ if "memory" not in st.session_state: ### IMPORTANT.
 
     # Initialize the FAISS vector store with OpenAI embeddings
     openai_api_key = openaikey
-    #faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openai_api_key))
+    faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openai_api_key))
 
     # Define the number of top matching chunks to retrieve
     number_of_top_matches = 5
 
     ## ??? tried to store faiss_store in session state, didn't work
-    if "faiss_store" not in st.session_state:
+    ##if "faiss_store" not in st.session_state:
         # Initialize FAISS vector store and store it in the session state
-        st.session_state.faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openaikey))
+        ##st.session_state.faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openaikey))
 
-        faiss_store = st.session_state.faiss_store
+        ##faiss_store = st.session_state.faiss_store
 
     # Define the retriever using FAISS store
     retriever = faiss_store.as_retriever(k=number_of_top_matches)
