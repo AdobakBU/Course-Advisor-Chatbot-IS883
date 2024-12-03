@@ -25,6 +25,7 @@ from langchain.prompts import ChatPromptTemplate
 # Show title and description.
 st.title("💬 Chatbot")
 
+
 ### Important part.
 # Create a session state variable to flag whether the app has been initialized.
 # This code will only be run first time the app is loaded.
@@ -113,8 +114,9 @@ if "memory" not in st.session_state: ### IMPORTANT.
 
         # Return the accumulated chunks after the loop finishes
         return chunks
+    
 
-    # Retrieve OpenAI API key
+        # Retrieve OpenAI API key
     openaikey = st.secrets["OpenAI_API_KEY"]
 
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
@@ -179,10 +181,18 @@ if "memory" not in st.session_state: ### IMPORTANT.
     agent = create_tool_calling_agent(chat, tools, prompt)
     st.session_state.agent_executor = AgentExecutor(agent=agent, tools=tools,  memory=st.session_state.memory, verbose= True)  # ### IMPORTANT to use st.session_state.memory and st.session_state.agent_executor.
 
+
+
+
+
 # Display the existing chat messages via `st.chat_message`.
 for message in st.session_state.memory.buffer:
     # if (message.type in ["ai", "human"]):
     st.chat_message(message.type).write(message.content)
+
+
+
+
 
 # Create a chat input field to allow the user to enter a message. This will display
 # automatically at the bottom of the page.
