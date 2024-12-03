@@ -146,7 +146,7 @@ if "memory" not in st.session_state: ### IMPORTANT.
     rag_tool = create_retriever_tool(
     retriever,
     "CourseFileRAG",
-    "Searches course description files...",
+    "Searches course description files",
     )
 
     # Enhanced system prompt for the language model
