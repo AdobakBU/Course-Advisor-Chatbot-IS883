@@ -12,6 +12,7 @@ from typing import List
 import requests
 from io import StringIO
 from io import BytesIO
+from langchain.tools.retriever import create_retriever_tool
 from langchain.schema import Document  
 from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -126,20 +127,27 @@ if "memory" not in st.session_state: ### IMPORTANT.
     chunks = text_splitter.split_documents(chunks)
 
     # Initialize the FAISS vector store with OpenAI embeddings
-    ##openai_api_key = openaikey
-    ##faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openai_api_key))
+    openai_api_key = openaikey
+    #faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openai_api_key))
 
     # Define the number of top matching chunks to retrieve
     number_of_top_matches = 5
 
+    ## ??? tried to store faiss_store in session state, didn't work
     if "faiss_store" not in st.session_state:
-# Initialize FAISS vector store and store it in the session state
+        # Initialize FAISS vector store and store it in the session state
         st.session_state.faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openaikey))
 
         faiss_store = st.session_state.faiss_store
 
-        # Define the retriever using FAISS store
+    # Define the retriever using FAISS store
     retriever = faiss_store.as_retriever(k=number_of_top_matches)
+
+    rag_tool = create_retriever_tool(
+    retriever,
+    "CourseFileRAG",
+    "Searches course description files...",
+    )
 
     # Enhanced system prompt for the language model
     system_prompt = (
@@ -166,10 +174,7 @@ if "memory" not in st.session_state: ### IMPORTANT.
         ]
     )
 
-    tools = [datetoday, retriever.as_tool(
-        name="BU-course-info-retreiver",
-        description="Get information about boston university courses.",
-    )]
+    tools = [datetoday, rag_tool]
     
     # Now we add the memory object to the agent executor
     # prompt = hub.pull("hwchase17/react-chat")
