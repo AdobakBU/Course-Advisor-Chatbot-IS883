@@ -135,12 +135,6 @@ if "memory" not in st.session_state: ### IMPORTANT.
         # Define the retriever using FAISS store
     retriever = faiss_store.as_retriever(k=number_of_top_matches)
 
-    if "faiss_store" not in st.session_state:
-    # Initialize FAISS vector store and store it in the session state
-        st.session_state.faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openai_api_key))
-
-        faiss_store = st.session_state.faiss_store
-
     # Enhanced system prompt for the language model
     system_prompt = (
         """
@@ -197,7 +191,11 @@ for message in st.session_state.memory.buffer:
     st.chat_message(message.type).write(message.content)
 
 
+if "faiss_store" not in st.session_state:
+# Initialize FAISS vector store and store it in the session state
+    st.session_state.faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openai_api_key))
 
+    faiss_store = st.session_state.faiss_store
 
 
 # Create a chat input field to allow the user to enter a message. This will display
