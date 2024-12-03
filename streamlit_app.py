@@ -201,6 +201,12 @@ if prompt := st.chat_input("What is up?"):
     # Prompt the user for a question
     question = prompt ##???????????????? how to reconcile this? with user input below ?????????????????? 
 
+    if "faiss_store" not in st.session_state:
+    # Initialize FAISS vector store and store it in the session state
+        st.session_state.faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openai_api_key))
+
+        faiss_store = st.session_state.faiss_store
+
     # Retrieve top matching chunks from FAISS store
     top_matching_chunks = faiss_store.similarity_search_with_score(question, k=number_of_top_matches)
 
