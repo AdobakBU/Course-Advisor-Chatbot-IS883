@@ -130,6 +130,9 @@ if "memory" not in st.session_state: ### IMPORTANT.
     # Define the number of top matching chunks to retrieve
     number_of_top_matches = 5
 
+        # Define the retriever using FAISS store
+    retriever = faiss_store.as_retriever(k=number_of_top_matches)
+
     # Enhanced system prompt for the language model
     system_prompt = (
         """
@@ -198,11 +201,8 @@ if prompt := st.chat_input("What is up?"):
     temperature = 1.0
     llm = ChatOpenAI(openai_api_key=openai_api_key, temperature=temperature)
 
-    # Create the aggregator to assemble documents into a single context
+            # Create the aggregator to assemble documents into a single context
     aggregator = create_stuff_documents_chain(llm, prompt=prompt)
-
-    # Define the retriever using FAISS store
-    retriever = faiss_store.as_retriever(k=number_of_top_matches)
 
     # Finalize the RAG chain
     rag_chain = create_retrieval_chain(retriever, aggregator)
