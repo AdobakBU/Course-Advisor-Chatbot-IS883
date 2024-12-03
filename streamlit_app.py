@@ -130,19 +130,6 @@ if "memory" not in st.session_state: ### IMPORTANT.
     # Define the number of top matching chunks to retrieve
     number_of_top_matches = 5
 
-    # Prompt the user for a question
-    question = prompt ##???????????????? how to reconcile this? with user input below   ?????????????????? 
-
-    # Retrieve top matching chunks from FAISS store
-    top_matching_chunks = faiss_store.similarity_search_with_score(question, k=number_of_top_matches)
-
-    # Combine content from all top matching chunks
-    combined_context = " ".join([chunk.page_content for chunk, score in top_matching_chunks])
-
-    # Answer generation using LangChain's Retrieval-Augmented Generation (RAG) chain
-    temperature = 1.0
-    llm = ChatOpenAI(openai_api_key=openai_api_key, temperature=temperature)
-
     # Enhanced system prompt for the language model
     system_prompt = (
         """
@@ -167,21 +154,6 @@ if "memory" not in st.session_state: ### IMPORTANT.
             ("human", "{input}"),
         ]
     )
-
-    # Create the aggregator to assemble documents into a single context
-    aggregator = create_stuff_documents_chain(llm, prompt=prompt)
-
-    # Define the retriever using FAISS store
-    retriever = faiss_store.as_retriever(k=number_of_top_matches)
-
-    # Finalize the RAG chain
-    rag_chain = create_retrieval_chain(retriever, aggregator)
-
-    # Get the answer for the user-provided question
-    response = rag_chain.invoke({"input": question, "context": combined_context})
-
-    # Safely extract the top answer based on the response structure
-    answer = response.get("answer")            #????? how to reconcile this with answer output below ??? 
 
     tools = [datetoday, retriever.as_tool(
         name="BU-course-info-retreiver",
@@ -213,6 +185,34 @@ for message in st.session_state.memory.buffer:
 # automatically at the bottom of the page.
 if prompt := st.chat_input("What is up?"):
     
+    # Prompt the user for a question
+    question = prompt ##???????????????? how to reconcile this? with user input below ?????????????????? 
+
+    # Retrieve top matching chunks from FAISS store
+    top_matching_chunks = faiss_store.similarity_search_with_score(question, k=number_of_top_matches)
+
+    # Combine content from all top matching chunks
+    combined_context = " ".join([chunk.page_content for chunk, score in top_matching_chunks])
+
+    # Answer generation using LangChain's Retrieval-Augmented Generation (RAG) chain
+    temperature = 1.0
+    llm = ChatOpenAI(openai_api_key=openai_api_key, temperature=temperature)
+
+    # Create the aggregator to assemble documents into a single context
+    aggregator = create_stuff_documents_chain(llm, prompt=prompt)
+
+    # Define the retriever using FAISS store
+    retriever = faiss_store.as_retriever(k=number_of_top_matches)
+
+    # Finalize the RAG chain
+    rag_chain = create_retrieval_chain(retriever, aggregator)
+
+    # Get the answer for the user-provided question
+    response = rag_chain.invoke({"input": question, "context": combined_context})
+
+    # Safely extract the top answer based on the response structure
+    answer = response.get("answer")            #????? how to reconcile this with answer output below ??? 
+
     # question
     st.chat_message("user").write(prompt)
 
