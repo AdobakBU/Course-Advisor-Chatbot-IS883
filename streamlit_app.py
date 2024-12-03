@@ -226,6 +226,7 @@ if prompt := st.chat_input("What is up?"):
     st.chat_message("user").write(prompt)
 
     # Generate a response using the OpenAI API.
+    ## ??????? do we still need this given response line above ???????????
     response = st.session_state.agent_executor.invoke({"input":prompt})['output']
 
     # response
