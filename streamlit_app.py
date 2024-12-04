@@ -136,10 +136,10 @@ if "memory" not in st.session_state: ### IMPORTANT.
             chunks, OpenAIEmbeddings(openai_api_key=openai_api_key)
         )
 
-    retriever = st.session_state.faiss_store.as_retriever(k=number_of_top_matches)
+    st.session_state.retriever = st.session_state.faiss_store.as_retriever(k=number_of_top_matches)
 
     rag_tool = create_retriever_tool(
-    retriever,
+    st.session_state.retriever,
     "CourseFileRAG",
     "Searches course description files",
     )
@@ -205,7 +205,7 @@ if user_input := st.chat_input("What is up?"):
     aggregator = create_stuff_documents_chain(llm, prompt=st.session_state.prompt)
 
     # Finalize the RAG chain
-    rag_chain = create_retrieval_chain(retriever, aggregator)
+    rag_chain = create_retrieval_chain(st.session_state.retriever, aggregator)
 
     # Get the answer for the user-provided question
     #response = rag_chain.invoke({"input": question, "context": combined_context})
