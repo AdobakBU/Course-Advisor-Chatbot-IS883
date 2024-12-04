@@ -166,7 +166,7 @@ if "memory" not in st.session_state: ### IMPORTANT.
     # prompt = hub.pull("hwchase17/react-chat")
     # agent = create_react_agent(chat, tools, prompt)
     from langchain_core.prompts import ChatPromptTemplate
-    prompt = ChatPromptTemplate.from_messages(
+    st.session_state.prompt = ChatPromptTemplate.from_messages(
         [
             ("system", system_prompt),
             ("placeholder", "{chat_history}"),
@@ -174,9 +174,8 @@ if "memory" not in st.session_state: ### IMPORTANT.
             ("placeholder", "{agent_scratchpad}"),
         ]
     )
-    st.session_state.prompt = prompt
 
-    agent = create_tool_calling_agent(chat, tools, prompt)
+    agent = create_tool_calling_agent(chat, tools, st.session_state.prompt)
     st.session_state.agent_executor = AgentExecutor(agent=agent, tools=tools,  memory=st.session_state.memory, verbose= True)  # ### IMPORTANT to use st.session_state.memory and st.session_state.agent_executor.
 
 # Display the existing chat messages via `st.chat_message`.
