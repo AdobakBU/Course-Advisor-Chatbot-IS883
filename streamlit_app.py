@@ -42,7 +42,8 @@ if "memory" not in st.session_state: ### IMPORTANT.
 
     # initialize the momory
     max_number_of_exchanges = 10
-    st.session_state.memory = ConversationBufferWindowMemory(memory_key="chat_history", k=max_number_of_exchanges, return_messages=True) ### IMPORTANT to use st.session_state.memory.
+    with st.spinner('Initializing Session Memory...'):
+        st.session_state.memory = ConversationBufferWindowMemory(memory_key="chat_history", k=max_number_of_exchanges, return_messages=True) ### IMPORTANT to use st.session_state.memory.
     
     # LLM
     chat = ChatOpenAI(openai_api_key=st.secrets["OpenAI_API_KEY"], model=model_type)
