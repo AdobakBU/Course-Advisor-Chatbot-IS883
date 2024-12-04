@@ -26,7 +26,7 @@ from langchain.prompts import ChatPromptTemplate
 LOGO_URL_LARGE = "https://raw.githubusercontent.com/AdobakBU/Course-Advisor-Chatbot-IS883/main/data/bu-logo.png"
 
 #Show logo 
-st.logo(LOGO_URL_LARGE)
+st.logo(LOGO_URL_LARGE, size='large')
 
 # Show title and description.
 st.title("💬 ClassQuest-GPT")
