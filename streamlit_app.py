@@ -196,7 +196,7 @@ for message in st.session_state.memory.buffer:
 
 # Create a chat input field to allow the user to enter a message. This will display
 # automatically at the bottom of the page.
-if user_input := st.chat_input("What is up?"):
+if user_input := st.chat_input("What BU course questions can I help with?"):
     
     # Prompt the user for a question
     #question = prompt ##???????????????? how to reconcile this? with user input below ?????????????????? 
