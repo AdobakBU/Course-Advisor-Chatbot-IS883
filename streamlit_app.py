@@ -174,6 +174,7 @@ if "memory" not in st.session_state: ### IMPORTANT.
             ("placeholder", "{agent_scratchpad}"),
         ]
     )
+    st.session_state.prompt = prompt
 
     agent = create_tool_calling_agent(chat, tools, prompt)
     st.session_state.agent_executor = AgentExecutor(agent=agent, tools=tools,  memory=st.session_state.memory, verbose= True)  # ### IMPORTANT to use st.session_state.memory and st.session_state.agent_executor.
@@ -202,7 +203,7 @@ if user_input := st.chat_input("What is up?"):
     llm = ChatOpenAI(openai_api_key=openaikey, temperature=temperature)
 
     # Create the aggregator to assemble documents into a single context
-    aggregator = create_stuff_documents_chain(llm, prompt=prompt)
+    aggregator = create_stuff_documents_chain(llm, prompt=st.session_state.prompt)
 
     # Finalize the RAG chain
     rag_chain = create_retrieval_chain(retriever, aggregator)
