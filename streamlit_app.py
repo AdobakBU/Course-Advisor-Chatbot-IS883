@@ -219,7 +219,7 @@ if user_input := st.chat_input("What is up?"):
 
     # Generate a response using the OpenAI API.
     ## ??????? do we still need this given response line above ???????????
-    response = st.session_state.agent_executor.invoke({"input": user_input, "context": combined_context})
+    response = st.session_state.agent_executor.invoke({"input": user_input}) ##, "context": combined_context
 
     # response
     st.chat_message("assistant").write(response)
