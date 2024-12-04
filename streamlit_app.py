@@ -136,10 +136,11 @@ if "memory" not in st.session_state: ### IMPORTANT.
             chunks, OpenAIEmbeddings(openai_api_key=openai_api_key)
         )
 
-    st.session_state.retriever = st.session_state.faiss_store.as_retriever(k=number_of_top_matches)
+    retriever = st.session_state.faiss_store.as_retriever(k=number_of_top_matches)
+    st.session_state.retriever = retriever
 
     rag_tool = create_retriever_tool(
-    st.session_state.retriever,
+    retriever,
     "CourseFileRAG",
     "Searches course description files",
     )
