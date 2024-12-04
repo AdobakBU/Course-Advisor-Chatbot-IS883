@@ -139,7 +139,8 @@ if "memory" not in st.session_state: ### IMPORTANT.
             chunks, OpenAIEmbeddings(openai_api_key=openaikey)
         )
 
-    retriever = st.session_state.faiss_store.as_retriever(k=number_of_top_matches)
+    with st.spinner('Building your AI advisor...'):
+        retriever = st.session_state.faiss_store.as_retriever(k=number_of_top_matches)
     st.session_state.retriever = retriever
 
     rag_tool = create_retriever_tool(
