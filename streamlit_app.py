@@ -23,6 +23,11 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 
+LOGO_URL_LARGE = "https://raw.githubusercontent.com/AdobakBU/Course-Advisor-Chatbot-IS883/main/data/bu-logo.png"
+
+#Show logo 
+st.logo(LOGO_URL_LARGE)
+
 # Show title and description.
 st.title("💬 ClassQuest-GPT")
 st.subheader("To help with class discovery and comparison")
