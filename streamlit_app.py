@@ -33,6 +33,7 @@ number_of_top_matches = 5
 openaikey = st.secrets["OpenAI_API_KEY"]
 
 ### Important part.
+
 # Create a session state variable to flag whether the app has been initialized.
 # This code will only be run first time the app is loaded.
 if "memory" not in st.session_state: ### IMPORTANT.
