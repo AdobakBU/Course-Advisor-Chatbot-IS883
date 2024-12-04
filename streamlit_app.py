@@ -206,7 +206,7 @@ if user_input := st.chat_input("What is up?"):
     aggregator = create_stuff_documents_chain(llm, prompt=st.session_state.prompt)
 
     # Finalize the RAG chain
-    rag_chain = create_retrieval_chain(st.session_state.retriever, aggregator)
+    rag_chain = create_retrieval_chain(retriever, aggregator)
 
     # Get the answer for the user-provided question
     #response = rag_chain.invoke({"input": question, "context": combined_context})
