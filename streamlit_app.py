@@ -130,7 +130,8 @@ if "memory" not in st.session_state: ### IMPORTANT.
     chunks = text_splitter.split_documents(chunks)
 
     # Initialize the FAISS vector store with OpenAI embeddings
-    faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openaikey))
+    with st.spinner('Constructing BU Course Context...'):
+        faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openaikey))
 
     if "faiss_store" not in st.session_state:
         st.session_state.faiss_store = FAISS.from_documents(
