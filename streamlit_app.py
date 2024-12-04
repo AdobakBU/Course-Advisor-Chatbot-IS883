@@ -132,7 +132,7 @@ if "memory" not in st.session_state: ### IMPORTANT.
 
     if "faiss_store" not in st.session_state:
         st.session_state.faiss_store = FAISS.from_documents(
-            chunks, OpenAIEmbeddings(openai_api_key=openai_api_key)
+            chunks, OpenAIEmbeddings(openai_api_key=openaikey)
         )
 
     retriever = st.session_state.faiss_store.as_retriever(k=number_of_top_matches)
