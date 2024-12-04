@@ -168,7 +168,7 @@ if "memory" not in st.session_state: ### IMPORTANT.
     from langchain_core.prompts import ChatPromptTemplate
     st.session_state.prompt = ChatPromptTemplate.from_messages(
         [
-            ("system", system_prompt),
+            ("system", "You are a helpful assistant"),
             ("placeholder", "{chat_history}"),
             ("human", "{input}"),
             ("placeholder", "{agent_scratchpad}"),
@@ -218,7 +218,7 @@ if user_input := st.chat_input("What is up?"):
 
     # Generate a response using the OpenAI API.
     ## ??????? do we still need this given response line above ???????????
-    response = st.session_state.agent_executor.invoke({"input": user_input, "context": combined_context}) ##, 
+    response = st.session_state.agent_executor.invoke({"input": user_input}) ## "context": combined_context
 
     # response
     st.chat_message("assistant").write(response)
