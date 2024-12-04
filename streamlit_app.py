@@ -24,7 +24,8 @@ from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 
 # Show title and description.
-st.title("💬 Chatbot")
+st.title("💬 ClassQuest-GPT")
+st.subheader("To help with class discovery and comparison")
 
 # Define the number of top matching chunks to retrieve
 number_of_top_matches = 5
