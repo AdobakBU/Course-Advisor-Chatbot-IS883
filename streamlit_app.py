@@ -168,7 +168,7 @@ if "memory" not in st.session_state: ### IMPORTANT.
     from langchain_core.prompts import ChatPromptTemplate
     st.session_state.prompt = ChatPromptTemplate.from_messages(
         [
-            ("system", system_prompt),
+            ("system", "You are a helpful assistant"),
             ("placeholder", "{chat_history}"),
             ("human", "{input}"),
             ("placeholder", "{agent_scratchpad}"),
