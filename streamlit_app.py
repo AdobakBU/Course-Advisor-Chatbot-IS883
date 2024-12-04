@@ -29,7 +29,17 @@ LOGO_URL_LARGE = "https://raw.githubusercontent.com/AdobakBU/Course-Advisor-Chat
 st.logo(LOGO_URL_LARGE, size='large')
 
 # Show title and description.
-st.title("💬 ClassQuest-GPT")
+st.title(("""\
+
+   ____ _                ___                 _              ____ ____ _____ 
+  / ___| | __ _ ___ ___ / _ \ _   _  ___ ___| |_           / ___|  _ |_   _|
+ | |   | |/ _` / __/ __| | | | | | |/ _ / __| __|  _____  | |  _| |_) || |  
+ | |___| | (_| \__ \__ | |_| | |_| |  __\__ | |_  |_____| | |_| |  __/ | |  
+  \____|_|\__,_|___|___/\__\_\\__,_|\___|___/\__|          \____|_|    |_|  
+                                                                            
+
+
+                    """))
 st.subheader("To help with class discovery and comparison")
 
 # Define the number of top matching chunks to retrieve
