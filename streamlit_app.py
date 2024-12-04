@@ -42,8 +42,7 @@ if "memory" not in st.session_state: ### IMPORTANT.
 
     # initialize the momory
     max_number_of_exchanges = 10
-    with st.spinner('Initializing Session Memory...'):
-        st.session_state.memory = ConversationBufferWindowMemory(memory_key="chat_history", k=max_number_of_exchanges, return_messages=True) ### IMPORTANT to use st.session_state.memory.
+    st.session_state.memory = ConversationBufferWindowMemory(memory_key="chat_history", k=max_number_of_exchanges, return_messages=True) ### IMPORTANT to use st.session_state.memory.
     
     # LLM
     chat = ChatOpenAI(openai_api_key=st.secrets["OpenAI_API_KEY"], model=model_type)
@@ -139,8 +138,7 @@ if "memory" not in st.session_state: ### IMPORTANT.
             chunks, OpenAIEmbeddings(openai_api_key=openaikey)
         )
 
-    with st.spinner('Building your AI advisor...'):
-        retriever = st.session_state.faiss_store.as_retriever(k=number_of_top_matches)
+    retriever = st.session_state.faiss_store.as_retriever(k=number_of_top_matches)
     st.session_state.retriever = retriever
 
     rag_tool = create_retriever_tool(
