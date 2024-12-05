@@ -28,6 +28,15 @@ LOGO_URL_LARGE = "https://raw.githubusercontent.com/AdobakBU/Course-Advisor-Chat
 #Show logo 
 st.logo(LOGO_URL_LARGE, size='large')
 
+#show sidebar
+with st.sidebar:
+    st.write("Here are some example prompts to get you started:")
+    st.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    st.write("+ Please suggest a BU Finance course to me that \
+             meets on Mondays and Wednesdays and is at a \
+             graduate intro level.")
+
+
 # Show title and description.
 st.title("ClassQuest-GPT")
 st.subheader("For help with BU class discovery and comparison")
