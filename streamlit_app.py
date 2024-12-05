@@ -152,22 +152,6 @@ if "memory" not in st.session_state: ### IMPORTANT.
     "Searches course description files",
     )
 
-    # Enhanced system prompt for the language model
-    system_prompt = (
-        """
-        You are an academic advisor assistant at Boston University. Answer all questions based on the provided context.
-        If the answer is not explicitly mentioned in the context, try to summarize the most relevant information related to the question.
-
-        Context:
-        {context}
-
-        Question:
-        {input}
-
-        Please provide a concise answer based on the above information.
-        """
-    )
-
     tools = [datetoday, rag_tool]
     
     # Now we add the memory object to the agent executor
