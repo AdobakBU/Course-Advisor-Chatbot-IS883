@@ -30,7 +30,7 @@ st.logo(LOGO_URL_LARGE, size='large')
 
 # Show title and description.
 st.title("ClassQuest-GPT")
-st.subheader("To help with class discovery and comparison")
+st.subheader("For help with BU class discovery and comparison")
 
 # Define the number of top matching chunks to retrieve
 number_of_top_matches = 5
