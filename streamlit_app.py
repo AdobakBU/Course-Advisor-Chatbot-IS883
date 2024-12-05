@@ -138,7 +138,7 @@ if "memory" not in st.session_state: ### IMPORTANT.
     with st.spinner('Constructing BU Course Context...'):
         faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openaikey))
 
-    with st.spinner('Generating FAISS store...'):
+    with st.spinner('Generating FAISS store... Almost done...'):
         if "faiss_store" not in st.session_state:
             st.session_state.faiss_store = FAISS.from_documents(
                 chunks, OpenAIEmbeddings(openai_api_key=openaikey)
@@ -153,7 +153,6 @@ if "memory" not in st.session_state: ### IMPORTANT.
     "Searches course description files",
     )
 
-    st.balloons()
     tools = [datetoday, rag_tool]
     
     # Now we add the memory object to the agent executor
