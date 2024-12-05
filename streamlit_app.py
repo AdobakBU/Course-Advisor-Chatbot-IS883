@@ -138,10 +138,11 @@ if "memory" not in st.session_state: ### IMPORTANT.
     with st.spinner('Constructing BU Course Context...'):
         faiss_store = FAISS.from_documents(chunks, OpenAIEmbeddings(openai_api_key=openaikey))
 
-    if "faiss_store" not in st.session_state:
-        st.session_state.faiss_store = FAISS.from_documents(
-            chunks, OpenAIEmbeddings(openai_api_key=openaikey)
-        )
+    with st.spinner('Generating FAISS store...'):
+        if "faiss_store" not in st.session_state:
+            st.session_state.faiss_store = FAISS.from_documents(
+                chunks, OpenAIEmbeddings(openai_api_key=openaikey)
+            )
 
     retriever = st.session_state.faiss_store.as_retriever(k=number_of_top_matches)
     st.session_state.retriever = retriever
