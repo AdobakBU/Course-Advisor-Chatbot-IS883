@@ -152,6 +152,7 @@ if "memory" not in st.session_state: ### IMPORTANT.
     "Searches course description files",
     )
 
+    st.balloons()
     tools = [datetoday, rag_tool]
     
     # Now we add the memory object to the agent executor
