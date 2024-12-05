@@ -35,6 +35,10 @@ with st.sidebar:
     st.write("+ 'Please suggest a BU Finance course to me that \
              meets on Mondays and Wednesdays and is at a \
              graduate intro level.' ")
+    st.write("+ 'Are there any graduate finance courses offered \
+             that have an open book exam policy?' ")
+    st.write("+ 'Can you please compare FE722 and FE712 and \
+             explain why I might take one course over the other?' ")
 
 
 # Show title and description.
