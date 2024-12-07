@@ -95,7 +95,7 @@ if "memory" not in st.session_state: ### IMPORTANT.
             "2023_FALL_FE_870_S1.pdf", "2023_FALL_FE_918_A1.pdf", "2023_SPRG_FE_712_A1.pdf",
             "2023_SPRG_FE_712_B1.pdf", "2023_SPRG_FE_712_C1.pdf", "2023_SPRG_FE_713_E1.pdf",
             "2023_SPRG_FE_722_F1.pdf", "2023_SPRG_FE_833_E1.pdf", "2023_SPRG_FE_850_E1.pdf",
-            "2023_SPRG_FE_854_E1.pdf", "2023_SPRG_FE_920_A1.pdf", "merged_class_schedule.csv",
+            "2023_SPRG_FE_854_E1.pdf", "2023_SPRG_FE_920_A1.pdf", "merged_class_schedule_with_descriptions.csv",
         ]
 
         chunks = []
