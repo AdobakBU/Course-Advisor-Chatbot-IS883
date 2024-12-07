@@ -215,15 +215,6 @@ if user_input := st.chat_input("What BU course questions can I help with?"):
     # Create the aggregator to assemble documents into a single context
     aggregator = create_stuff_documents_chain(llm, prompt=st.session_state.prompt)
 
-    # Finalize the RAG chain
-    #rag_chain = create_retrieval_chain(retriever, aggregator)
-
-    # Get the answer for the user-provided question
-    #response = rag_chain.invoke({"input": question, "context": combined_context})
-
-    # Safely extract the top answer based on the response structure
-    #answer = response.get("answer")            #????? how to reconcile this with answer output below ??? 
-
     # question
     st.chat_message("user").write(user_input)
 
